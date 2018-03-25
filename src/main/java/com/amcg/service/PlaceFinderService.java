@@ -6,7 +6,5 @@ import java.util.List;
 
 public interface PlaceFinderService {
 
-    List<Venue> findPlaceByName(String name);
-    List<Venue> findPopularPlaces(String name);
-    List<Venue> findRecomendedPlaces(String name);
+    List<Venue> findVenuesNearNamedLocation(String name);
 }

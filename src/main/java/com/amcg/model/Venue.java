@@ -1,14 +1,14 @@
 package com.amcg.model;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
 public class Venue {
 
     String id;
     String name;
-    String Location;
+    Location Location;
 }
