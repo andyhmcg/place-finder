@@ -1,12 +1,14 @@
 package com.amcg.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@EqualsAndHashCode
 public class Location {
 
-    double longitude;
-    double latitude;
+    double lng;
+    double lat;
 }

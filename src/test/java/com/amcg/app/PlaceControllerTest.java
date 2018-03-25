@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,19 +32,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(PlaceController.class)
 public class PlaceControllerTest {
 
-    public static final String VENUE_ID = "ID1";
-    public static final String COSTA_COFFEE = "Costa";
+    private  static final String VENUE_ID = "ID1";
+    private  static final String COSTA_COFFEE = "Costa";
+
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private PlaceFinderService placeFinderService;
 
+    @MockBean
+    private RestTemplateBuilder restTemplateBuilder;
+
     @Test
     public void getPlaces() throws Exception {
 
 
-        when(placeFinderService.findVenuesNearNamedLocation(COSTA_COFFEE)).thenReturn(Arrays.asList(createVenue()));
+        when(placeFinderService.findVenuesNearNamedLocation(COSTA_COFFEE)).thenReturn(Collections.singletonList(createVenue()));
         MvcResult result = mockMvc.perform(get("/places?name=Costa")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
@@ -55,8 +60,8 @@ public class PlaceControllerTest {
                 .andExpect(jsonPath("$.venues", hasSize(1)))
                 .andExpect(jsonPath("$.venues[0].id").value(VENUE_ID))
                 .andExpect(jsonPath("$.venues[0].name").value(COSTA_COFFEE))
-                .andExpect(jsonPath("$.venues[0].location.longitude").value(51.4826))
-                .andExpect(jsonPath("$.venues[0].location.latitude").value(0.0077));
+                .andExpect(jsonPath("$.venues[0].location.lng").value(51.4826))
+                .andExpect(jsonPath("$.venues[0].location.lat").value(0.0077));
 
 
         verify(placeFinderService).findVenuesNearNamedLocation(COSTA_COFFEE);

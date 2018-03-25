@@ -1,11 +1,13 @@
 package com.amcg.model;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@EqualsAndHashCode
 public class Venue {
 
     String id;
