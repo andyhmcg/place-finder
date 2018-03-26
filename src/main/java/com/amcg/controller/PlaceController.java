@@ -27,7 +27,7 @@ public class PlaceController {
     PlaceFinderService placeFinderService;
 
     @GetMapping(value = "/places", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Future<PlaceFinderResponse> getPlaces(final  @RequestParam @NotEmptyString String name, final @NotNull Double lng, final @NotNull Double lat ){
+    public Future<PlaceFinderResponse> getPlaces(final  @RequestParam @NotEmptyString String name, final @RequestParam @NotNull Double lng, final @RequestParam @NotNull Double lat ){
 
         return CompletableFuture.supplyAsync(() -> {
             List<Venue> venues = placeFinderService.findVenuesNearNamedLocation(Location.builder().lng(lng).lat(lat).build()
