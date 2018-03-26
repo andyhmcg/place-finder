@@ -8,11 +8,13 @@ import com.amcg.foursquare.response.recs.FourSquareRecommendationsResponse;
 import com.amcg.foursquare.response.search.FourSquareSearchResponse;
 import com.amcg.model.Location;
 import com.amcg.model.Venue;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -39,6 +41,7 @@ public class FourSquareClient {
     }
 
 
+    @HystrixCommand(fallbackMethod = "returnEmpty")
     public List<Venue> findVenueByName(Location location, String name){
 
         String ll = String.format(LL_PARAMETER,  location.getLng(), location.getLat());
@@ -48,6 +51,7 @@ public class FourSquareClient {
     }
 
 
+    @HystrixCommand(fallbackMethod = "returnEmpty")
     public  List<Venue>  findRecommendedVenues(Location location){
 
         String ll = String.format(LL_PARAMETER,  location.getLng(), location.getLat());
@@ -63,11 +67,22 @@ public class FourSquareClient {
     }
 
 
+    @HystrixCommand(fallbackMethod = "returnEmpty")
     public List<Venue> findPopularVenues(Location location){
 
         String ll = String.format(LL_PARAMETER,  location.getLng(), location.getLat());
         FourSquarePopularResponse result = restTemplate.getForObject(trendingUrl, FourSquarePopularResponse.class, ll);
 
         return result.getResponse().getVenues();
+    }
+
+    private List<Venue> returnEmpty(Location location, String name){
+
+        return Collections.emptyList();
+    }
+
+    private List<Venue> returnEmpty(Location location){
+
+        return Collections.emptyList();
     }
 }
