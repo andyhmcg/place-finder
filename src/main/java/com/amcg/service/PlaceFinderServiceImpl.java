@@ -22,15 +22,15 @@ public class PlaceFinderServiceImpl implements PlaceFinderService {
     }
 
     @Override
-    public List<Venue> findVenuesNearNamedLocation(String name) {
+    public List<Venue> findVenuesNearNamedLocation(Location location,String name) {
 
-        List<Venue> venuesByName =  fourSquareClient.findVenueByName(name);
+        List<Venue> venuesByName =  fourSquareClient.findVenueByName(location, name);
 
         return venuesByName.stream().map(Venue::getLocation)
-                 .flatMap((Function<Location, Stream<Venue>>) location -> {
+                 .flatMap((Function<Location, Stream<Venue>>) l -> {
 
-                    List<Venue> popular = fourSquareClient.findPopularVenues(location);
-                    List<Venue> recommended = fourSquareClient.findRecommendedVenues(location);
+                    List<Venue> popular = fourSquareClient.findPopularVenues(l);
+                    List<Venue> recommended = fourSquareClient.findRecommendedVenues(l);
 
                     return Stream.concat(popular.stream(), recommended.stream());
                 })

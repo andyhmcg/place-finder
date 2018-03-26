@@ -35,6 +35,8 @@ public class PlaceControllerTest {
     private  static final String VENUE_ID = "ID1";
     private  static final String COSTA_COFFEE = "Costa";
 
+    private static final Location location = Location.builder().lng(1.0).lat(1.0).build();
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -48,8 +50,8 @@ public class PlaceControllerTest {
     public void getPlaces() throws Exception {
 
 
-        when(placeFinderService.findVenuesNearNamedLocation(COSTA_COFFEE)).thenReturn(Collections.singletonList(createVenue()));
-        MvcResult result = mockMvc.perform(get("/places?name=Costa")
+        when(placeFinderService.findVenuesNearNamedLocation(location,COSTA_COFFEE)).thenReturn(Collections.singletonList(createVenue()));
+        MvcResult result = mockMvc.perform(get("/places?name=Costa&lng=1.0&lat=1.0")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
 
@@ -64,7 +66,7 @@ public class PlaceControllerTest {
                 .andExpect(jsonPath("$.venues[0].location.lat").value(0.0077));
 
 
-        verify(placeFinderService).findVenuesNearNamedLocation(COSTA_COFFEE);
+        verify(placeFinderService).findVenuesNearNamedLocation(location, COSTA_COFFEE);
 
 
     }
@@ -72,8 +74,8 @@ public class PlaceControllerTest {
     @Test
     public void canHandleEmptyResponse() throws Exception {
 
-        when(placeFinderService.findVenuesNearNamedLocation(COSTA_COFFEE)).thenReturn(Collections.emptyList());
-        MvcResult result = mockMvc.perform(get("/places?name=Costa")
+        when(placeFinderService.findVenuesNearNamedLocation(location,COSTA_COFFEE)).thenReturn(Collections.emptyList());
+        MvcResult result = mockMvc.perform(get("/places?name=Costa&lng=1.0&lat=1.0")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
 
@@ -83,7 +85,7 @@ public class PlaceControllerTest {
                 .andExpect(header().string(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.venues", hasSize(0)));
 
-        verify(placeFinderService).findVenuesNearNamedLocation(COSTA_COFFEE);
+        verify(placeFinderService).findVenuesNearNamedLocation(location,COSTA_COFFEE);
     }
 
 
@@ -94,9 +96,50 @@ public class PlaceControllerTest {
 
                 .andExpect(status().isBadRequest());
 
-        verify(placeFinderService, never()).findVenuesNearNamedLocation(anyString());
+        verify(placeFinderService, never()).findVenuesNearNamedLocation(any(Location.class),anyString());
 
     }
+
+    @Test
+    public void expectBadRequestWhenLngIsMissing() throws Exception {
+
+        mockMvc.perform(get("/places?name=Costa&lat=1.0"))
+
+                .andExpect(status().isBadRequest());
+
+        verify(placeFinderService, never()).findVenuesNearNamedLocation(any(Location.class),anyString());
+    }
+
+    @Test
+    public void expectBadRequestWhenLngIsInValid() throws Exception {
+
+        mockMvc.perform(get("/places?name=Costa&lat=1.0&lng=xxx"))
+
+                .andExpect(status().isBadRequest());
+
+        verify(placeFinderService, never()).findVenuesNearNamedLocation(any(Location.class),anyString());
+    }
+
+    @Test
+    public void expectBadRequestWhenLatIsMissing() throws Exception {
+
+        mockMvc.perform(get("/places?name=Costa&lng=1.0"))
+
+                .andExpect(status().isBadRequest());
+
+        verify(placeFinderService, never()).findVenuesNearNamedLocation(any(Location.class),anyString());
+    }
+
+    @Test
+    public void expectBadRequestWhenLatIsInValid() throws Exception {
+
+        mockMvc.perform(get("/places?name=Costa&lng=1.0&lat=xxx"))
+
+                .andExpect(status().isBadRequest());
+
+        verify(placeFinderService, never()).findVenuesNearNamedLocation(any(Location.class),anyString());
+    }
+
 
     @Test
     public void expectBadRequestWhenNameIsEmpty() throws Exception {
@@ -105,7 +148,7 @@ public class PlaceControllerTest {
         mockMvc.perform(get("/places?name="))
                 .andExpect(status().isBadRequest());
 
-        verify(placeFinderService, never()).findVenuesNearNamedLocation(anyString());
+        verify(placeFinderService, never()).findVenuesNearNamedLocation(any(Location.class),anyString());
 
     }
 

@@ -20,10 +20,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,6 +37,9 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FourSquareClientTest {
+
+    private static final Location location = Location.builder().lat(1.0).lng(1.0).build();
+    public static final String COSTA_COFFEE = "Costa";
 
     @Mock
     private RestTemplate restTemplate;
@@ -55,6 +58,10 @@ public class FourSquareClientTest {
         when(restTemplateBuilder.build()).thenReturn(restTemplate);
         fourSquareClient = new FourSquareClient(restTemplateBuilder);
 
+        ReflectionTestUtils.setField(fourSquareClient,"searchUrl","search.url");
+        ReflectionTestUtils.setField(fourSquareClient,"exploreUrl","explore.url");
+        ReflectionTestUtils.setField(fourSquareClient,"trendingUrl","trending.url");
+
     }
 
     @Test
@@ -66,13 +73,13 @@ public class FourSquareClientTest {
         SearchResponse searchResponse = SearchResponse.builder().venues(Collections.singletonList(venue)).build();
         FourSquareSearchResponse response = FourSquareSearchResponse.builder().meta(meta).response(searchResponse).build();
 
-        when(restTemplate.getForObject(any(),any(),anyString())).thenReturn(response);
+        when(restTemplate.getForObject(any(),any(),anyString(),anyString())).thenReturn(response);
 
-        List<Venue> result = fourSquareClient.findVenueByName("Costa");
+        List<Venue> result = fourSquareClient.findVenueByName(location, COSTA_COFFEE);
 
         assertThat("Venues", result, hasSize(1));
 
-        verify(restTemplate).getForObject(any(),any(),anyString());
+        verify(restTemplate).getForObject(any(),any(),anyString(),anyString());
     }
 
     @Test
@@ -88,14 +95,14 @@ public class FourSquareClientTest {
         RecommendationsResponse searchResponse = RecommendationsResponse.builder().groups(Collections.singletonList(group)).build();
         FourSquareRecommendationsResponse response = FourSquareRecommendationsResponse.builder().meta(meta).response(searchResponse).build();
 
-        when(restTemplate.getForObject(any(),any(),any(Object[].class))).thenReturn(response);
+        when(restTemplate.getForObject(any(),any(),anyString())).thenReturn(response);
 
         List<Venue> result = fourSquareClient.findRecommendedVenues(l1);
 
         assertThat("Venues", result, hasSize(1));
         assertThat("Recommended Venue", result, contains(venue));
 
-        verify(restTemplate).getForObject(any(),any(),any(Object[].class));
+        verify(restTemplate).getForObject(any(),any(),anyString());
     }
 
     @Test
@@ -109,14 +116,14 @@ public class FourSquareClientTest {
         PopularResponse popularResponse = PopularResponse.builder().venues(Collections.singletonList(venue)).build();
         FourSquarePopularResponse response = FourSquarePopularResponse.builder().meta(meta).response(popularResponse).build();
 
-        when(restTemplate.getForObject(any(),any(),any(Object[].class))).thenReturn(response);
+        when(restTemplate.getForObject(any(),any(),anyString())).thenReturn(response);
 
         List<Venue> result = fourSquareClient.findPopularVenues(l1);
 
         assertThat("Venues", result, hasSize(1));
         assertThat("Popular Venue", result, contains(venue));
 
-        verify(restTemplate).getForObject(any(),any(),any(Object[].class));
+        verify(restTemplate).getForObject(any(),any(),anyString());
 
 
     }
@@ -126,14 +133,14 @@ public class FourSquareClientTest {
 
 
         Location l1 = Location.builder().lng(1.0).lat(1.0).build();
-        when(restTemplate.getForObject(any(),any(),any(Object[].class))).thenThrow(new RestClientException("RestClientException"));
+        when(restTemplate.getForObject(any(),any(),anyString())).thenThrow(new RestClientException("RestClientException"));
 
         expectedException.expect(RestClientException.class);
         try {
             fourSquareClient.findPopularVenues(l1);
         }
         finally {
-            verify(restTemplate).getForObject(any(),any(),any(Object[].class));
+            verify(restTemplate).getForObject(any(),any(),anyString());
         }
     }
 
@@ -143,13 +150,13 @@ public class FourSquareClientTest {
         Location l1 = Location.builder().lng(1.0).lat(1.0).build();
 
         expectedException.expect(RestClientException.class);
-        when(restTemplate.getForObject(any(),any(),any(Object[].class))).thenThrow(new RestClientException("RestClientException"));
+        when(restTemplate.getForObject(any(),any(),anyString())).thenThrow(new RestClientException("RestClientException"));
 
         try {
             fourSquareClient.findRecommendedVenues(l1);
         }
         finally {
-            verify(restTemplate).getForObject(any(),any(),any(Object[].class));
+            verify(restTemplate).getForObject(any(),any(),anyString());
         }
 
     }
@@ -158,13 +165,13 @@ public class FourSquareClientTest {
     public void findVenueByNameCanThrowRestClientException() {
 
         expectedException.expect(RestClientException.class);
-        when(restTemplate.getForObject(any(),any(),anyString())).thenThrow(new RestClientException("RestClientException"));
+        when(restTemplate.getForObject(any(),any(),anyString(),anyString())).thenThrow(new RestClientException("RestClientException"));
 
         try {
-            fourSquareClient.findVenueByName("Costa");
+            fourSquareClient.findVenueByName(location, COSTA_COFFEE);
         }
         finally {
-            verify(restTemplate).getForObject(any(),any(),anyString());
+            verify(restTemplate).getForObject(any(),any(),anyString(),anyString());
         }
 
 

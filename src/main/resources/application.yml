@@ -1,0 +1,8 @@
+four:
+  square:
+    search:
+      url: https://api.foursquare.com/v2/venues/search?name={name}&ll={ll}&oauth_token=QIAQK4OOJQTJU5NHXDAQE4QAVGMUXLMFEZPSO3MJD4ME1B2H&v=20180324
+    explore:
+      url: https://api.foursquare.com/v2/venues/explore?ll={ll}&oauth_token=QIAQK4OOJQTJU5NHXDAQE4QAVGMUXLMFEZPSO3MJD4ME1B2H&v=20180324
+    trending:
+      url: https://api.foursquare.com/v2/venues/trending?ll={ll}&oauth_token=QIAQK4OOJQTJU5NHXDAQE4QAVGMUXLMFEZPSO3MJD4ME1B2H&v=20180324

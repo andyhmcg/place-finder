@@ -25,6 +25,9 @@ import static org.mockito.Mockito.when;
 public class PlaceFinderServiceImplTest {
 
 
+    private static final Location location = Location.builder().lng(1.0).lat(1.0).build();
+    private static final String COSTA_COFFEE = "COSTA";
+
     @Mock
     private FourSquareClient fourSquareClient;
 
@@ -40,18 +43,18 @@ public class PlaceFinderServiceImplTest {
         Location l1 = Location.builder().lng(1.0).lat(1.0).build();
         Location l2 = Location.builder().lng(2.0).lat(2.0).build();
 
-        when(fourSquareClient.findVenueByName("COSTA")).thenReturn(Arrays.asList(venueA, venueB));
+        when(fourSquareClient.findVenueByName(location,COSTA_COFFEE)).thenReturn(Arrays.asList(venueA, venueB));
         when(fourSquareClient.findPopularVenues(l1)).thenReturn(createRecommendedVenues());
         when(fourSquareClient.findRecommendedVenues(l1)).thenReturn(createPopularVenues());
         when(fourSquareClient.findPopularVenues(l2)).thenReturn(Collections.emptyList());
         when(fourSquareClient.findRecommendedVenues(l2)).thenReturn(Collections.emptyList());
 
-        List<Venue> result = placeFinderService.findVenuesNearNamedLocation("COSTA");
+        List<Venue> result = placeFinderService.findVenuesNearNamedLocation(location, COSTA_COFFEE);
 
         assertThat("Venues not null", result, notNullValue());
         assertThat("Venues size 6", result, hasSize(6));
 
-        verify(fourSquareClient).findVenueByName("COSTA");
+        verify(fourSquareClient).findVenueByName(location, COSTA_COFFEE);
         verify(fourSquareClient).findPopularVenues(l1);
         verify(fourSquareClient).findRecommendedVenues(l1);
         verify(fourSquareClient).findPopularVenues(l2);
@@ -64,16 +67,16 @@ public class PlaceFinderServiceImplTest {
 
 
         Location l1 = Location.builder().lng(1.0).lat(1.0).build();
-        when(fourSquareClient.findVenueByName("COSTA")).thenReturn(Collections.emptyList());
+        when(fourSquareClient.findVenueByName(location,COSTA_COFFEE)).thenReturn(Collections.emptyList());
 
 
-        List<Venue> result = placeFinderService.findVenuesNearNamedLocation("COSTA");
+        List<Venue> result = placeFinderService.findVenuesNearNamedLocation(location, COSTA_COFFEE);
 
         assertThat("Venues not null", result, notNullValue());
         assertThat("Venues size 0", result, hasSize(0));
 
 
-        verify(fourSquareClient).findVenueByName("COSTA");
+        verify(fourSquareClient).findVenueByName(location, COSTA_COFFEE);
         verify(fourSquareClient,never()).findPopularVenues(l1);
         verify(fourSquareClient, never()).findRecommendedVenues(l1);
 
@@ -89,7 +92,7 @@ public class PlaceFinderServiceImplTest {
         Location l2 = Location.builder().lng(2.0).lat(2.0).build();
 
 
-        when(fourSquareClient.findVenueByName("COSTA")).thenReturn(Arrays.asList(venueA, venueB));
+        when(fourSquareClient.findVenueByName(location,COSTA_COFFEE)).thenReturn(Arrays.asList(venueA, venueB));
 
         when(fourSquareClient.findPopularVenues(l1)).thenReturn(createRecommendedVenues());
         when(fourSquareClient.findRecommendedVenues(l1)).thenReturn(createPopularVenues());
@@ -98,7 +101,7 @@ public class PlaceFinderServiceImplTest {
         when(fourSquareClient.findRecommendedVenues(l2)).thenReturn(createPopularVenues());
 
 
-        List<Venue> result = placeFinderService.findVenuesNearNamedLocation("COSTA");
+        List<Venue> result = placeFinderService.findVenuesNearNamedLocation(location, COSTA_COFFEE);
 
         assertThat("Venues not null", result, notNullValue());
         assertThat("Venues size 6", result, hasSize(6));
@@ -120,7 +123,7 @@ public class PlaceFinderServiceImplTest {
         Location l2 = Location.builder().lng(2.0).lat(2.0).build();
 
 
-        when(fourSquareClient.findVenueByName("COSTA")).thenReturn(Arrays.asList(venueA, venueB));
+        when(fourSquareClient.findVenueByName(location,COSTA_COFFEE)).thenReturn(Arrays.asList(venueA, venueB));
 
         when(fourSquareClient.findPopularVenues(l1)).thenReturn(Collections.emptyList());
         when(fourSquareClient.findRecommendedVenues(l1)).thenReturn(createPopularVenues());
@@ -128,7 +131,7 @@ public class PlaceFinderServiceImplTest {
         when(fourSquareClient.findRecommendedVenues(l2)).thenReturn(Collections.emptyList());
 
 
-        List<Venue> result = placeFinderService.findVenuesNearNamedLocation("COSTA");
+        List<Venue> result = placeFinderService.findVenuesNearNamedLocation(location, COSTA_COFFEE);
 
         assertThat("Venues not null", result, notNullValue());
         assertThat("Venues size 3", result, hasSize(3));
@@ -149,7 +152,7 @@ public class PlaceFinderServiceImplTest {
         Location l1 = Location.builder().lng(1.0).lat(1.0).build();
         Location l2 = Location.builder().lng(2.0).lat(2.0).build();
 
-        when(fourSquareClient.findVenueByName("COSTA")).thenReturn(Arrays.asList(venueA, venueB));
+        when(fourSquareClient.findVenueByName(location,COSTA_COFFEE)).thenReturn(Arrays.asList(venueA, venueB));
 
         when(fourSquareClient.findPopularVenues(l1)).thenReturn(createRecommendedVenues());
         when(fourSquareClient.findRecommendedVenues(l1)).thenReturn(Collections.emptyList());
@@ -158,7 +161,7 @@ public class PlaceFinderServiceImplTest {
         when(fourSquareClient.findRecommendedVenues(l2)).thenReturn(Collections.emptyList());
 
 
-        List<Venue> result = placeFinderService.findVenuesNearNamedLocation("COSTA");
+        List<Venue> result = placeFinderService.findVenuesNearNamedLocation(location, COSTA_COFFEE);
 
         assertThat("Venues not null", result, notNullValue());
         assertThat("Venues size 3", result, hasSize(3));

@@ -8,6 +8,7 @@ import com.amcg.foursquare.response.recs.FourSquareRecommendationsResponse;
 import com.amcg.foursquare.response.search.FourSquareSearchResponse;
 import com.amcg.model.Location;
 import com.amcg.model.Venue;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -23,15 +24,25 @@ public class FourSquareClient {
     private final RestTemplate restTemplate;
 
 
+    private static final String LL_PARAMETER = "%s,%s";
+    @Value("${four.square.search.url}")
+    private String searchUrl;
+
+    @Value("${four.square.explore.url}")
+    private String exploreUrl;
+
+    @Value("${four.square.trending.url}")
+    private String trendingUrl;
+
     public FourSquareClient(RestTemplateBuilder restTemplateBuilder){
         this.restTemplate = restTemplateBuilder.build();
     }
 
 
-    public List<Venue> findVenueByName(String name){
+    public List<Venue> findVenueByName(Location location, String name){
 
-        FourSquareSearchResponse result = restTemplate.getForObject("https://api.foursquare.com/v2/venues/search?ll=51.4826,0.0077&oauth_token=QIAQK4OOJQTJU5NHXDAQE4QAVGMUXLMFEZPSO3MJD4ME1B2H&v=20180324", FourSquareSearchResponse.class, name);
-
+        String ll = String.format(LL_PARAMETER,  location.getLng(), location.getLat());
+        FourSquareSearchResponse result = restTemplate.getForObject(searchUrl, FourSquareSearchResponse.class, name, ll);
 
         return result.getResponse().getVenues();
     }
@@ -39,7 +50,8 @@ public class FourSquareClient {
 
     public  List<Venue>  findRecommendedVenues(Location location){
 
-        FourSquareRecommendationsResponse result = restTemplate.getForObject("https://api.foursquare.com/v2/venues/explore?ll=51.4826,0.0077&oauth_token=QIAQK4OOJQTJU5NHXDAQE4QAVGMUXLMFEZPSO3MJD4ME1B2H&v=20180324", FourSquareRecommendationsResponse.class);
+        String ll = String.format(LL_PARAMETER,  location.getLng(), location.getLat());
+        FourSquareRecommendationsResponse result = restTemplate.getForObject(exploreUrl, FourSquareRecommendationsResponse.class, ll);
 
         return result.getResponse().getGroups()
                 .stream()
@@ -50,9 +62,11 @@ public class FourSquareClient {
 
     }
 
+
     public List<Venue> findPopularVenues(Location location){
 
-        FourSquarePopularResponse result = restTemplate.getForObject("https://api.foursquare.com/v2/venues/trending?ll=51.4826,0.0077&oauth_token=QIAQK4OOJQTJU5NHXDAQE4QAVGMUXLMFEZPSO3MJD4ME1B2H&v=20180324", FourSquarePopularResponse.class);
+        String ll = String.format(LL_PARAMETER,  location.getLng(), location.getLat());
+        FourSquarePopularResponse result = restTemplate.getForObject(trendingUrl, FourSquarePopularResponse.class, ll);
 
         return result.getResponse().getVenues();
     }
