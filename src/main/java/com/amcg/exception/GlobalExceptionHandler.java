@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -27,15 +28,7 @@ public class GlobalExceptionHandler {
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.toList()));
     }
-
-    @ExceptionHandler
-    @ResponseBody
-    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    public Map handle(Throwable exception) {
-        return error("Generic Service Unavailable Error");
-    }
-
-
+    
 
     private Map error(Object message) {
         return Collections.singletonMap("error", message);
