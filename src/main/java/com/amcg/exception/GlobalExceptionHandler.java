@@ -28,6 +28,13 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toList()));
     }
 
+    @ExceptionHandler
+    @ResponseBody
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public Map handle(Throwable exception) {
+        return error("Generic Service Unavailable Error");
+    }
+
 
 
     private Map error(Object message) {

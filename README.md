@@ -11,7 +11,7 @@ In particular the following foursquare endpoints:-
 
 https://api.foursquare.com/v2/venues/search
 https://api.foursquare.com/v2/venues/explore
-https://api.foursquare.com/v2/venues/trending.
+https://api.foursquare.com/v2/venues/trending
 
 The search algorithm used is as follows
 
@@ -36,10 +36,25 @@ development at the same time as it allows the UI dev early access to the endpoin
 
 I used MockMvc to test the WebLayer mocking out the service layer dependencies.
 
+SAMPLE USAGE
+curl -X GET "http://localhost:8080/places?name=Costa&lng=51.4826&lat=0.0077" -H  "accept: application/json;charset=UTF-8"
 
+SAMPLE RESULT 
+{
+  "venues": [
+    {
+      "id": "515dc7a5f0e4ca28ef9c08e7",
+      "name": "Holiday Inn Express",
+      "location": {
+        "lng": 51.492295,
+        "lat": 0.01051
+      }
+  ]
+}
 
-TODO
+#TODO
 The security needs looking at currently I am using a hard coded OAUTH token
+
 Add integration tests. I have been using POSTman to test as I go but need automated integration tests.
 
 

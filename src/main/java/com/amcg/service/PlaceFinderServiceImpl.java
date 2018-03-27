@@ -33,20 +33,19 @@ public class PlaceFinderServiceImpl implements PlaceFinderService {
 
         List<Venue> venuesByName =  fourSquareClient.findVenueByName(location, name);
 
-        return venuesByName.parallelStream().map(Venue::getLocation)
-                 .flatMap((Function<Location, Stream<Venue>>) l -> {
+        return venuesByName.parallelStream()
+                .map(Venue::getLocation)
+                .flatMap((Function<Location, Stream<Venue>>) l -> {
 
                      CompletableFuture<List<Venue>> cfPopular = CompletableFuture.supplyAsync(() -> fourSquareClient.findPopularVenues(l));
                      CompletableFuture<List<Venue>> cfRecommended = CompletableFuture.supplyAsync(() -> fourSquareClient.findRecommendedVenues(l));
                      CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(cfPopular,cfRecommended);
 
-                     try {
-                         combinedFuture.get();
-                     } catch (Exception e) {
-                         throw new RuntimeException("Error getting Venues");
-                     }
 
-                     return Stream.of(cfPopular, cfRecommended)
+                    combinedFuture.join();
+
+
+                    return Stream.of(cfPopular, cfRecommended)
                              .flatMap((Function<CompletableFuture<List<Venue>>, Stream<Venue>>) cf -> cf.join().stream());
 
                 })
