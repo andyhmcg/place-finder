@@ -23,11 +23,12 @@ and the /trending endpoint to return a list of popular venues.
 The application can be run using 
 ./gradlew bootRun.
 
+# SWAGGER
 Once running the API documentation can be found at
 
 http://localhost:8080/swagger-ui.html
 
-
+# APPROACH
 When developing the application I took the approach of starting with the WEB layer and working through to the 
 service layer and foursquare client layer.
 
@@ -36,6 +37,8 @@ development at the same time as it allows the UI dev early access to the endpoin
 
 I used MockMvc to test the WebLayer mocking out the service layer dependencies.
 
+
+# EXAMPLES
 SAMPLE USAGE
 curl -X GET "http://localhost:8080/places?name=Costa&lng=51.4826&lat=0.0077" -H  "accept: application/json;charset=UTF-8"
 
